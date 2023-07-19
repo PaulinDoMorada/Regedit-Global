@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gerador de Logins</title>
+  <style>
+    body {
+      background-color: #333;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    #loginResult {
+      margin-bottom: 20px;
+      font-size: 18px;
+      text-align: center;
+      display: none;
+    }
+    
+    .progressBar {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .progressBar:before {
+      content: '';
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 2px solid #4CAF50;
+      border-top-color: transparent;
+      animation: spin 2s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Gerador de Logins</h1>
+    <div id="loginResult"></div>
+    <button id="generateBtn">Gerar Login</button>
+    <div class="progressBar"></div>
+  </div>
+  
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyAkVYJYohBYFHEDVnQhd1BbbE-UUu06Xfo",
+      databaseURL: "https://stalks-team-v1-default-rtdb.firebaseio.com",
+      storageBucket: "stalks-team-v1.appspot.com",
+      appId: "1:674347134120:android:7289fc84f5f454269f269d"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+    
+    var usersRef = database.ref('USERS');
+    
+    var deviceId = localStorage.getItem('deviceId');
+    var generateBtn = document.getElementById('generateBtn');
+    var loginResult = document.getElementById('loginResult');
+    var progressBar = document.querySelector('.progressBar');
+    
+    if (deviceId) {
+      generateBtn.disabled = true;
+      loginResult.innerHTML = 'Já foi gerado um login para este dispositivo.';
+      loginResult.style.display = 'block';
+    } else {
+      generateBtn.addEventListener('click', function() {
+        progressBar.style.display = 'block';
+        generateBtn.disabled = true;
+        
+        var login = generateLogin();
+    
+        usersRef.child(getDeviceId()).set({
+          disp: 0,
+          user: login.user,
+          pass: login.pass
+        });
+    
+        localStorage.setItem('deviceId', getDeviceId());
+    
+        progressBar.style.display = 'none';
+    
+        loginResult.innerHTML = 'Seu login gerado é:<br>User: ' + login.user + '<br>Pass: ' + login.pass;
+        loginResult.style.display = 'block';
+      });
+    }
+    
+    function generateLogin() {
+      var login = {};
+      login.user = generateRandomString(8);
+      login.pass = generateRandomString(10);
+      
+      return login;
+    }
+    
+    function getDeviceId() {
+      var date = new Date();
+      var timestamp = date.getTime();
+      var randomString = generateRandomString(8);
+      return timestamp + randomString;
+    }
+    
+    function generateRandomString(length) {
+      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var result = '';
+    
+      for (var i = 0; i < length; i++) {
+        var randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+      }
+    
+      return result;
+    }
+  </script>
+</body>
+</html>
