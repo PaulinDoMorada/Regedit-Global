@@ -14,7 +14,6 @@ certifi==2023.5.7
 chardet==3.0.4
 charset-normalizer==3.1.0
 click==8.1.6
-cmake @ file:///home/n0n3m4/Desktop/Pydroid/zBuildPrepared/cmake-3.20.3-py3-none-any.whl
 colorama==0.4.6
 Deprecated==1.2.14
 distro==1.6.0
