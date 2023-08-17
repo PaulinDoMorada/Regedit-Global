@@ -1,6 +1,8 @@
 import requests
 import time
 import random
+from validate_docbr import CPF
+import os
 
 class colors:
     HEADER = '\033[95m'
@@ -9,6 +11,7 @@ class colors:
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
+    ANSI =  '\033[91m'
 
 def generate_data(random_item):
     nome = random_item.get("nome")
@@ -72,23 +75,34 @@ def main():
 
     if response.status_code == 200:
         json_data = response.json()
-
+        
         while True:
-            print(""" _  _____ ___ ___ _____ ___    _     _   
+            print(colors.BLUE + """ _  _____ ___ ___ _____ ___    _     _   
 | |/ /_ _| _ \_ _|_   _/ _ \ _| |_ _| |_ 
 | ' < | ||   /| |  | || (_) |_   _|_   _|
 |_|\_\___|_|_\___| |_| \___/  |_|   |_|  
                                          
 """)
-            print(colors.BLUE+"1."+ colors.GREEN+ " Gerar Dados Reais")
-            print(colors.BLUE+"2." + colors.GREEN +" Sair")
-            
-            choice = input(colors.GREEN + "Escolha a opção: ")
-            
+            print(colors.BLUE + "1." + colors.GREEN + " Gerar Dados Reais")
+            print(colors.BLUE + "2." + colors.GREEN + " Verificar CPF")
+            print(colors.BLUE + "3." + colors.GREEN + " Sair")
+
+            choice = input(colors.WARNING + "Escolha a opção: ")
+
             if choice == "1":
                 random_item = random.choice(json_data)
                 generate_data(random_item)
             elif choice == "2":
+                cpf_input = input(colors.WARNING + "Digite o CPF para verificar: ")
+                if CPF().validate(cpf_input):
+                    print(colors.GREEN + "• Esse CPF é válido!!")
+                    time.sleep(4)
+                    os.system("clear" if os.name == "posix" else "cls")
+                else:
+                    print(colors.FAIL + "• Esse CPF é inválido.")
+                    time.sleep(4)
+                    os.system("clear" if os.name == "posix" else "cls")
+            elif choice == "3":
                 print("Saindo do programa..")
                 break
             else:
@@ -99,3 +113,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
